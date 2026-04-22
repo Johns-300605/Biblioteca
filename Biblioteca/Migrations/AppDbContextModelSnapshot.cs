@@ -40,33 +40,20 @@ namespace api_biblioteca.Migrations
                     b.Property<int>("Ano")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AutorId")
+                    b.Property<int>("Autorid")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Genero")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("genero")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("AutorId");
-
                     b.ToTable("Livros");
-                });
-
-            modelBuilder.Entity("Biblioteca.Models.Livro", b =>
-                {
-                    b.HasOne("Biblioteca.Models.Autor", "Autor")
-                        .WithMany()
-                        .HasForeignKey("AutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Autor");
                 });
 #pragma warning restore 612, 618
         }

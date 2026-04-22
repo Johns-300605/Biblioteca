@@ -31,34 +31,23 @@ namespace api_biblioteca.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Titulo = table.Column<string>(type: "TEXT", nullable: false),
                     Ano = table.Column<int>(type: "INTEGER", nullable: false),
-                    genero = table.Column<string>(type: "TEXT", nullable: false),
-                    AutorId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Genero = table.Column<string>(type: "TEXT", nullable: false),
+                    Autorid = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Livros", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Livros_Autor_AutorId",
-                        column: x => x.AutorId,
-                        principalTable: "Autor",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Livros_AutorId",
-                table: "Livros",
-                column: "AutorId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Livros");
+                name: "Autor");
 
             migrationBuilder.DropTable(
-                name: "Autor");
+                name: "Livros");
         }
     }
 }

@@ -7,9 +7,7 @@ namespace Biblioteca.Models
 
         public int Ano { get; set; }
 
-        public Genero genero {get; set;}
-        public Autor Autor { get; set; }
-
-        public int AutorId {get; set;}
+        public Genero Genero {get; set;}
+        public int Autorid { get; set; }
     }
 }

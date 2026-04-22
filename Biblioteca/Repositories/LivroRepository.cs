@@ -26,8 +26,7 @@ namespace Biblioteca.Repositories
         public List<Livro> GetByGenero(Genero genero)
         {
             return _context.Livros
-                .Where(l => l.genero == genero)
-                .Include(l => l.Autor)
+                .Where(l => l.Genero == genero)
                 .ToList();
         }
 
@@ -48,8 +47,9 @@ namespace Biblioteca.Repositories
                 return;
 
             existente.Titulo = livro.Titulo;
-            existente.Autor = livro.Autor;
             existente.Ano = livro.Ano;
+            existente.Genero = livro.Genero;
+            existente.Autorid = livro.Autorid;
 
             _context.SaveChanges();
         }
