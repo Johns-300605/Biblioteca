@@ -1,5 +1,6 @@
 using Biblioteca.Data;
 using Biblioteca.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Repositories
 {
@@ -22,9 +23,16 @@ namespace Biblioteca.Repositories
             return _context.Livros.Find(id);
         }
 
+        public List<Livro> GetByGenero(Genero genero)
+        {
+            return _context.Livros
+                .Where(l => l.genero == genero)
+                .Include(l => l.Autor)
+                .ToList();
+        }
+
         public void Add(Livro livro)
         {
-            // Regra: ano não pode ser futuro
             if (livro.Ano > DateTime.Now.Year)
                 throw new Exception("Ano não pode ser futuro");
 

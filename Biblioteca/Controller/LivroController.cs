@@ -32,6 +32,12 @@ namespace Biblioteca.Controllers
             return Ok(livro);
         }
 
+        [HttpGet("genero/{genero}")]
+        public IActionResult GetByGenero(Genero genero)
+        {
+            return Ok(_repo.GetByGenero(genero));
+        }
+
         [HttpPost]
         public IActionResult Post(Livro livro)
         {

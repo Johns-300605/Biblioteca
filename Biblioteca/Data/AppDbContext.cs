@@ -13,5 +13,11 @@ namespace Biblioteca.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Livro>()
+                .Property(l => l.genero)
+                .HasConversion<string>();
+        }
     }
 }
