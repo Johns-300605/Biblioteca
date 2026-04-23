@@ -14,23 +14,23 @@ namespace Biblioteca.Repositories
 
         public List<Autor> GetAll()
         {
-            return _context.Autor.ToList();
+            return _context.Autores.ToList();
         }
 
         public Autor GetById(int id)
         {
-            return _context.Autor.Find(id);
+            return _context.Autores.Find(id)!;
         }
 
         public void Add(Autor autor)
         {
-            _context.Autor.Add(autor);
+            _context.Autores.Add(autor);
             _context.SaveChanges();
         }
 
         public void Update(Autor autor)
         {
-            var existente = _context.Autor.Find(autor.Id);
+            var existente = _context.Autores.Find(autor.Id);
 
             if (existente == null)
                 return;
@@ -42,11 +42,11 @@ namespace Biblioteca.Repositories
 
         public void Delete(int id)
         {
-            var autor = _context.Autor.Find(id);
+            var autor = _context.Autores.Find(id);
 
             if (autor != null)
             {
-                _context.Autor.Remove(autor);
+                _context.Autores.Remove(autor);
                 _context.SaveChanges();
             }
         }

@@ -37,6 +37,12 @@ namespace Biblioteca.Controllers
         {
             try
             {
+                var existente = _repo.GetAll()
+                .FirstOrDefault(a => a.Nome.ToLower().Trim() == autor.Nome.ToLower().Trim());
+
+                if (existente != null)
+                return Conflict("Autor já cadastrado");
+
                 _repo.Add(autor);
                 return Ok(autor);
             }

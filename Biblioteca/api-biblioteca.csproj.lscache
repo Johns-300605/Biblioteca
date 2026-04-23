@@ -64,6 +64,8 @@ Migrations/
  20260423143718_InitialCreate.Designer.cs
  20260423145109_CorrigirGenero.cs
  20260423145109_CorrigirGenero.Designer.cs
+ 20260423223104_RenomearAutorParaAutores.cs
+ 20260423223104_RenomearAutorParaAutores.Designer.cs
  AppDbContextModelSnapshot.cs
 Model/
  Autor.cs
