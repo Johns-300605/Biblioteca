@@ -20,7 +20,7 @@ namespace Biblioteca.Repositories
 
         public Livro GetById(int id)
         {
-            return _context.Livros.Find(id);
+            return _context.Livros.Find(id)!;
         }
 
         public List<Livro> GetByGenero(Genero genero)
@@ -49,7 +49,7 @@ namespace Biblioteca.Repositories
             existente.Titulo = livro.Titulo;
             existente.Ano = livro.Ano;
             existente.Genero = livro.Genero;
-            existente.Autorid = livro.Autorid;
+            existente.AutorId = livro.AutorId;
 
             _context.SaveChanges();
         }

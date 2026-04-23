@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace api_biblioteca.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260422221645_InitialCreate")]
+    [Migration("20260423143718_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,10 +43,10 @@ namespace api_biblioteca.Migrations
                     b.Property<int>("Ano")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Autorid")
+                    b.Property<int>("AutorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Genero")
+                    b.Property<string>("GeneroId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

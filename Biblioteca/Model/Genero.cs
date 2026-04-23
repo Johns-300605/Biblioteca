@@ -7,5 +7,6 @@ public enum Genero
     Fantasia,
     FiccaoCientifica,
     Drama,
-    Suspense
+    Suspense,
+    Misterio,
 }

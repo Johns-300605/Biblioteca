@@ -60,8 +60,10 @@ Controller/
  LivroController.cs
 Data/AppDbContext.cs
 Migrations/
- 20260422221645_InitialCreate.cs
- 20260422221645_InitialCreate.Designer.cs
+ 20260423143718_InitialCreate.cs
+ 20260423143718_InitialCreate.Designer.cs
+ 20260423145109_CorrigirGenero.cs
+ 20260423145109_CorrigirGenero.Designer.cs
  AppDbContextModelSnapshot.cs
 Model/
  Autor.cs

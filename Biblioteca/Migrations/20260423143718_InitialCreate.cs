@@ -31,8 +31,8 @@ namespace api_biblioteca.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Titulo = table.Column<string>(type: "TEXT", nullable: false),
                     Ano = table.Column<int>(type: "INTEGER", nullable: false),
-                    Genero = table.Column<string>(type: "TEXT", nullable: false),
-                    Autorid = table.Column<int>(type: "INTEGER", nullable: false)
+                    GeneroId = table.Column<string>(type: "TEXT", nullable: false),
+                    AutorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
