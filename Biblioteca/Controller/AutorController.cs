@@ -55,6 +55,11 @@ namespace Biblioteca.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, Autor autor)
         {
+            var existente = _repo.GetById(id);
+
+            if (existente == null)
+            return NotFound("Autor não encontrado");
+            
             autor.Id = id;
             _repo.Update(autor);
 
@@ -64,6 +69,11 @@ namespace Biblioteca.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            var autor = _repo.GetById(id);
+
+            if (autor == null)
+            return NotFound("Autor não encontrado");
+
             _repo.Delete(id);
             return Ok("Autor removido com sucesso");
         }
