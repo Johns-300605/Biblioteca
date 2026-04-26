@@ -31,6 +31,17 @@ namespace Biblioteca.Controllers
 
             return Ok(livro);
         }
+        
+        [HttpGet("autor/{autorId}")]
+        public IActionResult GetByAutor(int autorId)
+        {
+            var livros = _repo.GetByAutor(autorId);
+
+            if (livros == null || !livros.Any())
+                return NotFound("Nenhum livro encontrado para esse autor");
+
+            return Ok(livros);
+        }
 
         [HttpGet("genero/{genero}")]
         public IActionResult GetByGenero(Genero genero)

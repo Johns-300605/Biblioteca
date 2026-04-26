@@ -37,6 +37,9 @@
   - GET /api/livros/genero/{genero}
     → filtra livros por gênero
       ex: /api/livros/genero/fantasia
+
+  - GET /api/livros/autor/{autorId}
+      → filtra livros por autor
   
   - POST /api/livros
     → cadastra um livro

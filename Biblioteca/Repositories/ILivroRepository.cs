@@ -6,6 +6,7 @@ namespace Biblioteca.Repositories
     {
         List<Livro> GetAll();
         Livro GetById(int id); 
+        List<Livro> GetByAutor(int autorId);
         List<Livro> GetByGenero(Genero genero);
         void Add(Livro livro);
         void Update(Livro livro);

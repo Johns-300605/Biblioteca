@@ -22,6 +22,13 @@ namespace Biblioteca.Repositories
         {
             return _context.Livros.Find(id)!;
         }
+        
+        public List<Livro> GetByAutor(int autorId)
+        {
+            return _context.Livros
+                .Where(l => l.AutorId == autorId)
+                .ToList();
+        }
 
         public List<Livro> GetByGenero(Genero genero)
         {
