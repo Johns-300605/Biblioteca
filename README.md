@@ -1,5 +1,6 @@
 # API Biblioteca
 
+## Descrição
 
 - Esse projeto é uma API de biblioteca feita em ASP.NET Core.
 - Nele, é possível cadastrar autores e livros, listar, atualizar, deletar e também filtrar livros por gênero.
