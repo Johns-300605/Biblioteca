@@ -18,7 +18,10 @@ builder.Services.AddCors(options =>
                                 .AllowAnyMethod();
                       });
 });
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

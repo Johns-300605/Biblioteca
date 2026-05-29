@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import { useState, useEffect } from "react";
+=======
+import { useState, useEffect, useCallback } from "react";
+>>>>>>> Stashed changes
 
 const generos = [
   "Todos",
@@ -285,7 +289,11 @@ function App() {
   const [pesquisa, setPesquisa] =
     useState("");
 
+<<<<<<< Updated upstream
   async function buscarLivros() {
+=======
+  const buscarLivros = useCallback(async () => {
+>>>>>>> Stashed changes
     try {
       const response =
         await fetch(
@@ -301,6 +309,7 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+<<<<<<< Updated upstream
   }
 
   useEffect(() => {
@@ -310,6 +319,17 @@ function App() {
       autoresLista
     );
   }, []);
+=======
+  },[]);
+
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  buscarLivros();
+}, []);
+useEffect(() => {
+  console.log(autoresLista);
+}, [autoresLista]);
+>>>>>>> Stashed changes
 
   async function adicionarLivro(
     novoLivro
