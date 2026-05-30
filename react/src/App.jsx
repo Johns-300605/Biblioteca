@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 
-// ─── constantes ──────────────────────────────────────────────────────────────
 const API = "http://localhost:5064";
 
-const generos = [
+const GENEROS = [
   "Todos",
   "Romance",
   "Terror",
@@ -14,7 +13,20 @@ const generos = [
   "Misterio",
 ];
 
-// ─── helper: headers com token ────────────────────────────────────────────────
+const GENERO_LABEL = {
+  Romance:          "Romance",
+  Terror:           "Terror",
+  Fantasia:         "Fantasia",
+  FiccaoCientifica: "Ficção Científica",
+  Drama:            "Drama",
+  Suspense:         "Suspense",
+  Misterio:         "Mistério",
+};
+
+function badgeClass(genero) {
+  return "badge badge-" + (genero || "").toLowerCase();
+}
+
 function authHeaders(token) {
   return {
     "Content-Type": "application/json",
@@ -27,416 +39,476 @@ function TelaLogin({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro]         = useState("");
+  const [loading, setLoading]   = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setErro("");
+    setLoading(true);
 
     try {
-      const response = await fetch(`${API}/api/auth/login`, {
+      const res = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
-        setErro("Usuário ou senha inválidos");
-        return;
-      }
+      if (!res.ok) { setErro("Usuário ou senha inválidos."); return; }
 
-      const data = await response.json();
+      const data = await res.json();
       onLogin(data.token);
     } catch {
-      setErro("Erro ao conectar com a API");
+      setErro("Não foi possível conectar à API.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div>
-      <h1>Biblioteca — Login</h1>
+    <div className="login-wrapper">
+      <div className="login-card">
+        <div className="login-logo">📚</div>
+        <h1>Biblioteca</h1>
+        <p className="login-subtitle">Faça login para continuar</p>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Usuário: </label>
+        {erro && <div className="error-msg">{erro}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Usuário</label>
+            <input
+              type="text"
+              placeholder="admin"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Senha</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="login-submit" disabled={loading}>
+            {loading ? "Entrando…" : "Entrar"}
+          </button>
+        </form>
+
+        <p className="login-hint">admin / admin123</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Card de estatística ──────────────────────────────────────────────────────
+function StatCard({ icon, label, value, colorClass }) {
+  return (
+    <div className="stat-card">
+      <div className={`stat-icon ${colorClass}`}>{icon}</div>
+      <div>
+        <div className="stat-label">{label}</div>
+        <div className="stat-value">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Lista de Autores ─────────────────────────────────────────────────────────
+function ListaAutores({ autores, onEditar, onDeletar, onAdicionar }) {
+  const [nome, setNome]       = useState("");
+  const [aberto, setAberto]   = useState(false);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!nome.trim()) return;
+    onAdicionar(nome.trim());
+    setNome("");
+    setAberto(false);
+  }
+
+  return (
+    <div className="section">
+      <div className="section-header">
+        <h2>Lista de Autores</h2>
+        <button className="btn-primary" onClick={() => setAberto(!aberto)}>
+          + Adicionar Autor
+        </button>
+      </div>
+
+      {aberto && (
+        <form onSubmit={handleSubmit} style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="admin"
+            type="text"
+            placeholder="Nome do autor"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            style={{ flex: 1 }}
+            autoFocus
           />
-        </div>
+          <button type="submit" className="btn-primary">Salvar</button>
+          <button type="button" onClick={() => setAberto(false)}>Cancelar</button>
+        </form>
+      )}
 
-        <div>
-          <label>Senha: </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="admin123"
-          />
-        </div>
-
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
-
-        <button type="submit">Entrar</button>
-      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Autor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(autores).map(([id, nome]) => (
+            <tr key={id}>
+              <td>{nome}</td>
+              <td>
+                <div className="actions">
+                  <button className="btn-edit"   onClick={() => onEditar(id, nome)}   style={{ padding: "3px 10px" }}>Editar</button>
+                  <button className="btn-danger"  onClick={() => onDeletar(id)}        style={{ padding: "3px 10px" }}>Deletar</button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
 // ─── Listagem de Livros ───────────────────────────────────────────────────────
-function ListagemLivros({ livros, autoresLista, onDeletar }) {
+function ListagemLivros({ livros, autores, onDeletar }) {
   if (livros.length === 0) {
-    return <p>Nenhum livro encontrado.</p>;
+    return (
+      <div className="section" style={{ textAlign: "center", color: "#6b6b6b", fontSize: 13 }}>
+        Nenhum livro encontrado.
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h2>Livros ({livros.length})</h2>
-
-      {livros.map((l) => (
-        <div key={l.id}>
-          <strong>{l.titulo}</strong>
-          {" — "}
-          {l.genero}
-          {" | "}
-          {autoresLista[l.autorId] || "Sem autor"}
-          {" ("}
-          {l.ano}
-          {")"}
-
-          <button onClick={() => onDeletar(l.id)} style={{ marginLeft: 10 }}>
-            Deletar
-          </button>
-        </div>
-      ))}
+    <div className="section">
+      <h2 style={{ marginBottom: "1rem" }}>Todos os Livros</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style={{ width: 44 }}></th>
+            <th>Título</th>
+            <th>Gênero</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {livros.map((l) => (
+            <tr key={l.id}>
+              <td>
+                <div className="book-cover">📖</div>
+              </td>
+              <td>
+                <div className="book-info">
+                  <strong>{l.titulo}</strong>
+                  <span>{autores[l.autorId] || "Autor desconhecido"} ({l.ano})</span>
+                </div>
+              </td>
+              <td>
+                <span className={badgeClass(l.genero)}>
+                  {GENERO_LABEL[l.genero] || l.genero}
+                </span>
+              </td>
+              <td>
+                <button className="btn-danger" onClick={() => onDeletar(l.id)} style={{ padding: "3px 10px" }}>
+                  Deletar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-// ─── Formulário de Autor ──────────────────────────────────────────────────────
-function FormularioAutor({ onAdicionarAutor }) {
-  const [nome, setNome] = useState("");
+// ─── Painel inferior (gêneros + formulários) ──────────────────────────────────
+function PainelInferior({ livros, autores, token, onLivroAdicionado, onAutorAdicionado }) {
+  const [nomeAutor, setNomeAutor] = useState("");
+  const [titulo,    setTitulo]    = useState("");
+  const [autorId,   setAutorId]   = useState("");
+  const [ano,       setAno]       = useState("");
+  const [genero,    setGenero]    = useState("Terror");
 
-  function handleSubmit(e) {
+  const quantidadePorGenero = GENEROS
+    .filter((g) => g !== "Todos")
+    .map((g) => ({
+      genero: g,
+      label: GENERO_LABEL[g] || g,
+      quantidade: livros.filter((l) => l.genero?.toLowerCase() === g.toLowerCase()).length,
+    }));
+
+  async function handleAdicionarAutor(e) {
     e.preventDefault();
-
-    if (!nome) {
-      return alert("Digite o nome do autor!");
-    }
-
-    onAdicionarAutor(nome);
-    setNome("");
+    if (!nomeAutor.trim()) return;
+    await onAutorAdicionado(nomeAutor.trim());
+    setNomeAutor("");
   }
 
-  return (
-    <div>
-      <h2>Cadastrar Autor</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nome: </label>
-          <input value={nome} onChange={(e) => setNome(e.target.value)} />
-        </div>
-
-        <button type="submit">Cadastrar Autor</button>
-      </form>
-    </div>
-  );
-}
-
-// ─── Formulário de Livro ──────────────────────────────────────────────────────
-function FormularioLivro({ onAdicionar, autoresLista }) {
-  const [titulo,  setTitulo]  = useState("");
-  const [autorId, setAutorId] = useState(1);
-  const [ano,     setAno]     = useState("");
-  const [genero,  setGenero]  = useState("Terror");
-
-  function handleSubmit(e) {
+  async function handleAdicionarLivro(e) {
     e.preventDefault();
-
-    if (!titulo || !ano) {
-      return alert("Preencha todos os campos!");
-    }
-
-    onAdicionar({ titulo, autorId: Number(autorId), ano: Number(ano), genero });
-
+    if (!titulo.trim() || !ano || !autorId) return alert("Preencha todos os campos!");
+    await onLivroAdicionado({ titulo, autorId: Number(autorId), ano: Number(ano), genero });
     setTitulo("");
-    setAutorId(1);
     setAno("");
+    setAutorId("");
     setGenero("Terror");
   }
 
   return (
-    <div>
-      <h2>Adicionar Livro</h2>
+    <div className="bottom-grid">
+      {/* Gêneros */}
+      <div className="section">
+        <h2 style={{ marginBottom: "0.75rem" }}>Quantidade por Gênero</h2>
+        <ul className="genre-list">
+          {quantidadePorGenero.map((item) => (
+            <li key={item.genero}>
+              <span>{item.label}</span>
+              <span className="genre-count">{item.quantidade}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Título: </label>
-          <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-        </div>
+      {/* Cadastrar Autor */}
+      <div className="section">
+        <h2 style={{ marginBottom: "0.75rem" }}>Cadastrar Novo Autor</h2>
+        <form onSubmit={handleAdicionarAutor}>
+          <div className="form-group">
+            <label>Nome de Autor</label>
+            <input
+              type="text"
+              placeholder="Nome do autor"
+              value={nomeAutor}
+              onChange={(e) => setNomeAutor(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="btn-primary" style={{ width: "100%", marginTop: 4 }}>
+            Cadastrar Autor
+          </button>
+        </form>
+      </div>
 
-        <div>
-          <label>Autor: </label>
-          <select value={autorId} onChange={(e) => setAutorId(e.target.value)}>
-            {Object.entries(autoresLista).map(([id, nome]) => (
-              <option key={id} value={id}>
-                {nome}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label>Ano: </label>
-          <input
-            type="number"
-            value={ano}
-            onChange={(e) => setAno(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label>Gênero: </label>
-          <select value={genero} onChange={(e) => setGenero(e.target.value)}>
-            {generos
-              .filter((g) => g !== "Todos")
-              .map((g) => (
-                <option key={g} value={g}>
-                  {g}
-                </option>
+      {/* Adicionar Livro */}
+      <div className="section">
+        <h2 style={{ marginBottom: "0.75rem" }}>Adicionar Livro</h2>
+        <form onSubmit={handleAdicionarLivro}>
+          <div className="form-group">
+            <label>Título</label>
+            <input
+              type="text"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Autor</label>
+            <select value={autorId} onChange={(e) => setAutorId(e.target.value)}>
+              <option value="">Selecione…</option>
+              {Object.entries(autores).map(([id, nome]) => (
+                <option key={id} value={id}>{nome}</option>
               ))}
-          </select>
-        </div>
-
-        <button type="submit">Adicionar</button>
-      </form>
+            </select>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Ano</label>
+              <input
+                type="number"
+                value={ano}
+                onChange={(e) => setAno(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Gênero</label>
+              <select value={genero} onChange={(e) => setGenero(e.target.value)}>
+                {GENEROS.filter((g) => g !== "Todos").map((g) => (
+                  <option key={g} value={g}>{GENERO_LABEL[g] || g}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <button type="submit" className="btn-primary" style={{ width: "100%", marginTop: 4 }}>
+            Adicionar
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
 // ─── App principal ────────────────────────────────────────────────────────────
 function App() {
-  const [token,       setToken]       = useState(null);
-  const [livros,      setLivros]      = useState([]);
-  const [autoresLista, setAutoresLista] = useState({});
+  const [token,    setToken]    = useState(null);
+  const [livros,   setLivros]   = useState([]);
+  const [autores,  setAutores]  = useState({});
   const [filtroGenero, setFiltroGenero] = useState("Todos");
-  const [pesquisa,    setPesquisa]    = useState("");
-
-  // ── busca autores da API ao montar ──────────────────────────────────────────
-  async function buscarAutores() {
-    try {
-      const response = await fetch(`${API}/api/autores`);
-      const data     = await response.json();
-
-      // converte array [{ id, nome }] em objeto { id: nome }
-      const mapa = {};
-      data.forEach((a) => { mapa[a.id] = a.nome; });
-      setAutoresLista(mapa);
-    } catch (error) {
-      console.error("Erro ao buscar autores:", error);
-    }
-  }
+  const [pesquisa, setPesquisa] = useState("");
 
   async function buscarLivros() {
     try {
-      const response = await fetch(`${API}/api/livros`);
-      const data     = await response.json();
+      const res  = await fetch(`${API}/api/livros`);
+      const data = await res.json();
       setLivros(data);
-    } catch (error) {
-      console.error("Erro ao buscar livros:", error);
-    }
+    } catch (err) { console.error(err); }
   }
 
-  // Dispara quando o usuário faz login com sucesso
+  async function buscarAutores() {
+    try {
+      const res  = await fetch(`${API}/api/autores`);
+      const data = await res.json();
+      const mapa = {};
+      data.forEach((a) => { mapa[a.id] = a.nome; });
+      setAutores(mapa);
+    } catch (err) { console.error(err); }
+  }
+
   useEffect(() => {
     if (!token) return;
     buscarLivros();
     buscarAutores();
   }, [token]);
 
-  // ── operações de escrita (requerem token) ───────────────────────────────────
   async function adicionarLivro(novoLivro) {
     await fetch(`${API}/api/livros`, {
-      method:  "POST",
+      method: "POST",
       headers: authHeaders(token),
-      body:    JSON.stringify(novoLivro),
+      body: JSON.stringify(novoLivro),
     });
-
     buscarLivros();
   }
 
   async function adicionarAutor(nome) {
-    try {
-      const response = await fetch(`${API}/api/autores`, {
-        method:  "POST",
-        headers: authHeaders(token),
-        body:    JSON.stringify({ nome }),
-      });
-
-      if (!response.ok) {
-        alert("Erro ao cadastrar autor");
-        return;
-      }
-
-      const novoAutor = await response.json();
-      setAutoresLista((prev) => ({ ...prev, [novoAutor.id]: novoAutor.nome }));
-    } catch (error) {
-      console.error(error);
-    }
+    const res = await fetch(`${API}/api/autores`, {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ nome }),
+    });
+    if (!res.ok) { alert("Erro ao cadastrar autor"); return; }
+    const novo = await res.json();
+    setAutores((prev) => ({ ...prev, [novo.id]: novo.nome }));
   }
 
   async function editarAutor(id, nomeAtual) {
     const novoNome = prompt("Editar autor:", nomeAtual);
-
     if (!novoNome) return;
-
-    try {
-      await fetch(`${API}/api/autores/${id}`, {
-        method:  "PUT",
-        headers: authHeaders(token),
-        body:    JSON.stringify({ id: Number(id), nome: novoNome }),
-      });
-
-      setAutoresLista({ ...autoresLista, [id]: novoNome });
-    } catch (error) {
-      console.error(error);
-    }
+    await fetch(`${API}/api/autores/${id}`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify({ id: Number(id), nome: novoNome }),
+    });
+    setAutores((prev) => ({ ...prev, [id]: novoNome }));
   }
 
   async function deletarAutor(id) {
-    const confirmar = window.confirm("Deseja deletar este autor?");
-
-    if (!confirmar) return;
-
-    try {
-      await fetch(`${API}/api/autores/${id}`, {
-        method:  "DELETE",
-        headers: authHeaders(token),
-      });
-
-      const novosAutores = { ...autoresLista };
-      delete novosAutores[id];
-      setAutoresLista(novosAutores);
-    } catch (error) {
-      console.error(error);
-    }
+    if (!window.confirm("Deseja deletar este autor?")) return;
+    await fetch(`${API}/api/autores/${id}`, {
+      method: "DELETE",
+      headers: authHeaders(token),
+    });
+    setAutores((prev) => {
+      const copia = { ...prev };
+      delete copia[id];
+      return copia;
+    });
   }
 
   async function deletarLivro(id) {
     await fetch(`${API}/api/livros/${id}`, {
-      method:  "DELETE",
+      method: "DELETE",
       headers: authHeaders(token),
     });
-
     buscarLivros();
   }
 
-  // ── derivados / filtros ─────────────────────────────────────────────────────
+  // ── derivados ──
   const livrosFiltrados = livros.filter((l) => {
-    const generoValido =
+    const porGenero =
       filtroGenero === "Todos" ||
       l.genero?.toLowerCase() === filtroGenero.toLowerCase();
-
-    const nomeValido = l.titulo
-      ?.toLowerCase()
-      .includes(pesquisa.toLowerCase());
-
-    return generoValido && nomeValido;
+    const porNome = l.titulo?.toLowerCase().includes(pesquisa.toLowerCase());
+    return porGenero && porNome;
   });
 
-  const quantidadePorGenero = generos
-    .filter((g) => g !== "Todos")
-    .map((g) => ({
-      genero:     g,
-      quantidade: livros.filter(
-        (l) => l.genero?.toLowerCase() === g.toLowerCase()
-      ).length,
-    }));
-
-  const totalLivros  = livros.length;
   const totalGeneros = [...new Set(livros.map((l) => l.genero))].length;
 
-  // ── render: mostrar login enquanto não há token ─────────────────────────────
-  if (!token) {
-    return <TelaLogin onLogin={setToken} />;
-  }
+  // ── render ──
+  if (!token) return <TelaLogin onLogin={setToken} />;
 
-  // ── render: aplicação principal ─────────────────────────────────────────────
   return (
     <div>
-      <h1>Biblioteca</h1>
-
-      <button onClick={() => setToken(null)}>Sair (Logout)</button>
-
-      <h2>Resumo do Sistema</h2>
-
-      <div>Total de livros: {totalLivros}</div>
-      <div>Total de gêneros: {totalGeneros}</div>
-      <div>Total de autores: {Object.keys(autoresLista).length}</div>
-
-      <h3>Autores</h3>
-
-      <ul>
-        {Object.entries(autoresLista).map(([id, autor]) => (
-          <li key={id}>
-            {autor}
-
-            <button onClick={() => editarAutor(id, autor)} style={{ marginLeft: 10 }}>
-              Editar
-            </button>
-
-            <button onClick={() => deletarAutor(id)} style={{ marginLeft: 5 }}>
-              Deletar
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        <label>Pesquisar livro: </label>
-        <input
-          type="text"
-          value={pesquisa}
-          onChange={(e) => setPesquisa(e.target.value)}
-          placeholder="Digite o nome do livro"
-        />
+      <div className="page-header">
+        <button className="btn-logout" onClick={() => setToken(null)}>
+          Sair
+        </button>
+        <h1>Biblioteca</h1>
+        <p>Visão geral do sistema</p>
       </div>
 
-      <div>
-        <label>Filtrar por gênero: </label>
-        <select
-          value={filtroGenero}
-          onChange={(e) => setFiltroGenero(e.target.value)}
-        >
-          {generos.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </select>
+      {/* Estatísticas */}
+      <div className="stat-grid">
+        <StatCard icon="📚" label="Total de Livros"  value={livros.length}                    colorClass="purple" />
+        <StatCard icon="👤" label="Total de Autores" value={Object.keys(autores).length}       colorClass="teal"   />
+        <StatCard icon="🏷️" label="Gêneros"          value={totalGeneros}                     colorClass="coral"  />
       </div>
 
-      <h2>Quantidade de livros por gênero</h2>
+      {/* Autores */}
+      <ListaAutores
+        autores={autores}
+        onEditar={editarAutor}
+        onDeletar={deletarAutor}
+        onAdicionar={adicionarAutor}
+      />
 
-      {quantidadePorGenero.map((item) => (
-        <div key={item.genero}>
-          {item.genero}: {item.quantidade}
+      {/* Filtros */}
+      <div className="section">
+        <div className="filters">
+          <div className="filter-group">
+            <label>🔍 Pesquisar livro:</label>
+            <input
+              type="text"
+              value={pesquisa}
+              onChange={(e) => setPesquisa(e.target.value)}
+              placeholder="Digite o título..."
+            />
+          </div>
+          <div className="filter-group">
+            <label>Filtrar por gênero:</label>
+            <select value={filtroGenero} onChange={(e) => setFiltroGenero(e.target.value)}>
+              {GENEROS.map((g) => (
+                <option key={g} value={g}>{GENERO_LABEL[g] || g}</option>
+              ))}
+            </select>
+          </div>
         </div>
-      ))}
+      </div>
 
+      {/* Gêneros + Formulários */}
+      <PainelInferior
+        livros={livros}
+        autores={autores}
+        token={token}
+        onLivroAdicionado={adicionarLivro}
+        onAutorAdicionado={adicionarAutor}
+      />
+
+      {/* Lista de livros */}
       <ListagemLivros
         livros={livrosFiltrados}
-        autoresLista={autoresLista}
+        autores={autores}
         onDeletar={deletarLivro}
       />
-
-      <FormularioLivro
-        onAdicionar={adicionarLivro}
-        autoresLista={autoresLista}
-      />
-
-      <FormularioAutor onAdicionarAutor={adicionarAutor} />
     </div>
   );
 }

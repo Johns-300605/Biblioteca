@@ -1,111 +1,325 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --purple-50: #EEEDFE;
+  --purple-100: #CECBF6;
+  --purple-600: #534AB7;
+  --purple-800: #3C3489;
+  --teal-50: #E1F5EE;
+  --teal-600: #0F6E56;
+  --coral-50: #FAECE7;
+  --coral-600: #993C1D;
+  --blue-50: #E6F1FB;
+  --blue-600: #185FA5;
+  --pink-50: #FBEAF0;
+  --pink-600: #993556;
+  --amber-50: #FAEEDA;
+  --amber-600: #854F0B;
+  --red-50: #FCEBEB;
+  --red-600: #A32D2D;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  background: #f4f3f0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-}
+body { background: #f4f3f0; min-height: 100vh; }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  max-width: 920px;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  padding: 1.5rem 1rem 3rem;
+  width: 100%;
+}
+
+h1 { font-size: 26px; font-weight: 500; color: #0f0f0f; }
+h2 { font-size: 16px; font-weight: 500; color: #0f0f0f; }
+h3 { font-size: 14px; font-weight: 500; color: #0f0f0f; }
+
+p { margin: 0; }
+
+/* ── Utilitários ── */
+.page-header { text-align: center; margin-bottom: 1.5rem; }
+.page-header p { font-size: 13px; color: #6b6b6b; margin-top: 2px; }
+
+/* ── Cards de Estatísticas ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.stat-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  align-items: center;
+  gap: 14px;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
+.stat-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.stat-icon.purple { background: var(--purple-50); color: var(--purple-600); }
+.stat-icon.teal   { background: var(--teal-50);   color: var(--teal-600); }
+.stat-icon.coral  { background: var(--coral-50);  color: var(--coral-600); }
+
+.stat-label { font-size: 11px; color: #6b6b6b; text-transform: uppercase; letter-spacing: 0.4px; }
+.stat-value { font-size: 24px; font-weight: 500; color: #0f0f0f; line-height: 1.1; }
+
+/* ── Seções / Cards ── */
+.section {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+/* ── Botões ── */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(0,0,0,0.2);
+  background: transparent;
+  color: #1a1a1a;
+  padding: 5px 12px;
+  transition: background 0.15s;
+}
+button:hover { background: #f4f3f0; }
+
+.btn-primary {
+  background: var(--purple-600);
+  color: #fff;
+  border-color: var(--purple-600);
+}
+.btn-primary:hover { background: var(--purple-800); border-color: var(--purple-800); }
+
+.btn-edit   { color: var(--blue-600);  border-color: var(--blue-600);  }
+.btn-edit:hover { background: var(--blue-50); }
+
+.btn-danger { color: var(--red-600);   border-color: var(--red-600);   }
+.btn-danger:hover { background: var(--red-50); }
+
+.btn-logout {
+  float: right;
+  font-size: 12px;
+  color: #6b6b6b;
+  border-color: rgba(0,0,0,0.15);
+}
+.btn-logout:hover { color: var(--red-600); border-color: var(--red-600); background: var(--red-50); }
+
+/* ── Tabelas ── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  text-align: left;
+  font-size: 11px;
   font-weight: 500;
-  color: var(--text-h);
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 0 10px 8px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.1);
+}
+td {
+  padding: 9px 10px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.06);
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+
+.actions { display: flex; gap: 4px; }
+
+/* ── Formulários ── */
+.form-group { margin-bottom: 10px; }
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b6b6b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 5px;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(0,0,0,0.2);
+  background: #fff;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.15s;
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+input:focus, select:focus { border-color: var(--purple-600); box-shadow: 0 0 0 3px var(--purple-50); }
+
+/* ── Filtros ── */
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
-p {
+
+.filter-group { display: flex; align-items: center; gap: 8px; }
+.filter-group label {
+  font-size: 12px;
+  color: #6b6b6b;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
   margin: 0;
 }
+.filter-group input,
+.filter-group select { flex: 1; }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* ── Grid inferior ── */
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ── Lista de gêneros ── */
+.genre-list { list-style: none; }
+.genre-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6b6b6b;
+  padding: 5px 0;
+  border-bottom: 0.5px solid rgba(0,0,0,0.06);
+}
+.genre-list li:last-child { border-bottom: none; }
+.genre-count { font-weight: 500; color: #1a1a1a; }
+
+/* ── Badges de Gênero ── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.badge-romance       { background: var(--pink-50);   color: var(--pink-600); }
+.badge-terror        { background: var(--red-50);    color: var(--red-600); }
+.badge-fantasia      { background: var(--purple-50); color: var(--purple-600); }
+.badge-ficcaocientifica { background: var(--blue-50); color: var(--blue-600); }
+.badge-drama         { background: var(--teal-50);   color: var(--teal-600); }
+.badge-suspense      { background: var(--coral-50);  color: var(--coral-600); }
+.badge-misterio      { background: var(--amber-50);  color: var(--amber-600); }
+
+/* ── Capa do livro (placeholder) ── */
+.book-cover {
+  width: 32px; height: 40px;
+  border-radius: 3px;
+  background: #f4f3f0;
+  display: flex; align-items: center; justify-content: center;
+  color: #aaa;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.book-info strong { display: block; font-size: 13px; color: #1a1a1a; }
+.book-info span   { font-size: 11px; color: #6b6b6b; }
+
+/* ── Tela de Login ── */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f3f0;
+  padding: 1rem;
+}
+
+.login-card {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-logo {
+  width: 48px; height: 48px;
+  background: var(--purple-50);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  color: var(--purple-600);
+  margin: 0 auto 1.25rem;
+}
+
+.login-card h1 { font-size: 20px; text-align: center; margin-bottom: 4px; }
+.login-subtitle { font-size: 13px; color: #6b6b6b; text-align: center; margin-bottom: 1.75rem; }
+
+.login-card .form-group { margin-bottom: 14px; }
+.login-card .form-group label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6b6b;
+  display: block;
+  margin-bottom: 5px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.login-submit {
+  width: 100%;
+  padding: 9px;
+  font-size: 14px;
+  margin-top: 4px;
+  background: var(--purple-600);
+  color: #fff;
+  border-color: var(--purple-600);
+  border-radius: 8px;
+}
+.login-submit:hover { background: var(--purple-800); border-color: var(--purple-800); }
+
+.login-hint {
+  font-size: 12px;
+  color: #9b9b9b;
+  text-align: center;
+  margin-top: 1.25rem;
+}
+
+.error-msg {
+  background: var(--red-50);
+  border: 0.5px solid var(--red-600);
+  color: var(--red-600);
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
 }
