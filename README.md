@@ -13,8 +13,8 @@ João Henrique Ziegle do Rosário
 Sistema web para gerenciar uma biblioteca. Com ele é possível:
 
 - Cadastrar, editar e remover **autores**
-- Cadastrar e remover **livros**
-- **Filtrar** livros por gênero ou pesquisar pelo título
+- Cadastrar, editar e remover **livros**
+- **Filtrar** livros por gênero, autor ou pesquisar pelo título
 - Ver um **resumo geral** com total de livros, autores e gêneros
 
 O sistema é dividido em duas partes que rodam ao mesmo tempo:

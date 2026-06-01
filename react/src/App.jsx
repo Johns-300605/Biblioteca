@@ -182,7 +182,7 @@ function ListaAutores({ autores, onEditar, onDeletar, onAdicionar }) {
 }
 
 // ─── Listagem de Livros ───────────────────────────────────────────────────────
-function ListagemLivros({ livros, autores, onDeletar }) {
+function ListagemLivros({ livros, autores, onEditar, onDeletar }) {
   if (livros.length === 0) {
     return (
       <div className="section" style={{ textAlign: "center", color: "#6b6b6b", fontSize: 13 }}>
@@ -207,7 +207,7 @@ function ListagemLivros({ livros, autores, onDeletar }) {
           {livros.map((l) => (
             <tr key={l.id}>
               <td>
-                <div className="book-cover">📖</div>
+                <div className="book-id">{l.id}</div>
               </td>
               <td>
                 <div className="book-info">
@@ -220,10 +220,9 @@ function ListagemLivros({ livros, autores, onDeletar }) {
                   {GENERO_LABEL[l.genero] || l.genero}
                 </span>
               </td>
-              <td>
-                <button className="btn-danger" onClick={() => onDeletar(l.id)} style={{ padding: "3px 10px" }}>
-                  Deletar
-                </button>
+              <td className="actions">
+                <button className="btn-edit"   onClick={() => onEditar(l)}   style={{ padding: "3px 10px" }}>Editar</button>
+                <button className="btn-danger" onClick={() => onDeletar(l.id)} style={{ padding: "3px 10px" }}>Deletar</button>
               </td>
             </tr>
           ))}
@@ -354,6 +353,7 @@ function App() {
   const [livros,   setLivros]   = useState([]);
   const [autores,  setAutores]  = useState({});
   const [filtroGenero, setFiltroGenero] = useState("Todos");
+  const [filtroAutor, setFiltroAutor] = useState("Todos");
   const [pesquisa, setPesquisa] = useState("");
 
   async function buscarLivros() {
@@ -432,13 +432,32 @@ function App() {
     buscarLivros();
   }
 
+  async function editarLivro(livro) {
+    const novoTitulo = prompt("Novo título:", livro.titulo);
+    if (!novoTitulo) return;
+
+    const livroAtualizado = { ...livro, titulo: novoTitulo };
+
+    const res = await fetch(`${API}/api/livros/${livro.id}`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify(livroAtualizado),
+    });
+
+    if (res.ok) {
+      buscarLivros();
+    } else {
+      alert("Erro ao editar livro.");
+    }
+  }
+
   // ── derivados ──
   const livrosFiltrados = livros.filter((l) => {
-    const porGenero =
-      filtroGenero === "Todos" ||
-      l.genero?.toLowerCase() === filtroGenero.toLowerCase();
+    const porGenero = filtroGenero === "Todos" || l.genero?.toLowerCase() === filtroGenero.toLowerCase();
     const porNome = l.titulo?.toLowerCase().includes(pesquisa.toLowerCase());
-    return porGenero && porNome;
+    const porAutor = filtroAutor === "Todos" || l.autorId.toString() === filtroAutor.toString();
+    
+    return porGenero && porNome && porAutor;
   });
 
   const totalGeneros = [...new Set(livros.map((l) => l.genero))].length;
@@ -490,6 +509,13 @@ function App() {
                 <option key={g} value={g}>{GENERO_LABEL[g] || g}</option>
               ))}
             </select>
+            <label>Filtrar por autor:</label>
+            <select value={filtroAutor} onChange={(e) => setFiltroAutor(e.target.value)}>
+              <option value="Todos">Todos</option>
+              {Object.entries(autores).map(([id, nome]) => (
+                <option key={id} value={id}>{nome}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -507,6 +533,7 @@ function App() {
       <ListagemLivros
         livros={livrosFiltrados}
         autores={autores}
+        onEditar={editarLivro}
         onDeletar={deletarLivro}
       />
     </div>
